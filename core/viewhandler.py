@@ -28,10 +28,11 @@ input_tuple[0] = ctx
 [17] = clip_skip
 [18] = hypernet
 [19] = lora
+[20] = spoiler
 '''
 tuple_names = ['ctx', 'simple_prompt', 'prompt', 'negative_prompt', 'data_model', 'steps', 'width', 'height',
                'guidance_scale', 'sampler', 'seed', 'strength', 'init_image', 'batch_count', 'style', 'facefix',
-               'highres_fix', 'clip_skip', 'hypernet', 'lora']
+               'highres_fix', 'clip_skip', 'hypernet', 'lora', 'spoiler']
 
 
 # the modal that is used for the 🖋 button
