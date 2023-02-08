@@ -154,6 +154,12 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         description='The number of images to generate. This is "Batch count", not "Batch size".',
         required=False,
     )
+    @option(
+        'spoiler',
+        bool,
+        description='Hide the image in a spoiler.',
+        required=False,
+    )
     async def dream_handler(self, ctx: discord.ApplicationContext, *,
                             prompt: str, negative_prompt: str = None,
                             data_model: Optional[str] = None,
@@ -171,7 +177,8 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
                             strength: Optional[str] = None,
                             init_image: Optional[discord.Attachment] = None,
                             init_url: Optional[str],
-                            count: Optional[int] = None):
+                            count: Optional[int] = None,
+                            spoiler: Optional[bool] = None):
 
         # update defaults with any new defaults from settingscog
         channel = '% s' % ctx.channel.id
@@ -204,6 +211,8 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
             strength = settings.read(channel)['strength']
         if count is None:
             count = settings.read(channel)['count']
+        if spoiler is None:
+            spoiler = settings.read(channel)['spoiler']
 
         # if a model is not selected, do nothing
         model_name = 'Default'
@@ -286,7 +295,7 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         # set up tuple of parameters to pass into the Discord view
         input_tuple = (
             ctx, simple_prompt, prompt, negative_prompt, data_model, steps, width, height, guidance_scale, sampler, seed, strength,
-            init_image, count, style, facefix, highres_fix, clip_skip, hypernet, lora)
+            init_image, count, style, facefix, highres_fix, clip_skip, hypernet, lora, spoiler)
         view = viewhandler.DrawView(input_tuple)
         # setup the queue
         if queuehandler.GlobalQueue.dream_thread.is_alive():
@@ -448,7 +457,7 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
                     draw_time = '{0:.3f}'.format(end_time - start_time)
                     message = f'my {noun_descriptor} of ``{queue_object.simple_prompt}`` took me ``{draw_time}`` ' \
                               f'seconds!\n> *{queue_object.ctx.author.name}#{queue_object.ctx.author.discriminator}*'
-                    files = [discord.File(fp=buffer, filename=f'{queue_object.seed}-{i}.png') for (i, buffer) in
+                    files = [discord.File(fp=buffer, filename=f'{queue_object.seed}-{i}.png', spoiler=queue_object.spoiler) for (i, buffer) in
                              enumerate(buffer_handles)]
 
                     queuehandler.process_post(

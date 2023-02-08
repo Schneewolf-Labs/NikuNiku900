@@ -30,7 +30,8 @@ template = {
     "strength": "0.75",
     "count": 1,
     "max_count": 1,
-    "upscaler_1": "ESRGAN_4x"
+    "upscaler_1": "ESRGAN_4x",
+    "spoiler": False
 }
 
 
@@ -256,7 +257,7 @@ def populate_global_vars():
     global_var.hyper_names.append('None')
     # populate remaining options
     for s2 in r2.json():
-        global_var.style_names[s2['name']] = s2['prompt'], s2['negative_prompt']
+        global_var.style_names[s2['name']] = s2['prompt']
     for s3 in r3.json():
         global_var.facefix_models.append(s3['name'])
     for s4, shape in r4.json()['loaded'].items():
