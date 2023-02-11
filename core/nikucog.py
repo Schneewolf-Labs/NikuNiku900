@@ -19,7 +19,7 @@ from core import settings
 from core import settingscog
 
 
-class StableCog(commands.Cog, name='Stable Diffusion', description='Create images from natural language.'):
+class StableCog(commands.Cog, name='NikuNiku900', description='Generate anime images from your prompt!'):
     ctx_parse = discord.ApplicationContext
 
     def __init__(self, bot):
