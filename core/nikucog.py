@@ -43,6 +43,12 @@ class StableCog(commands.Cog, name='NikuNiku900', description='Generate anime im
         required=False,
     )
     @option(
+        'seed',
+        int,
+        description='The seed to use for reproducibility.',
+        required=False,
+    )
+    @option(
         'spoiler',
         bool,
         description='Hide the image in a spoiler.',
@@ -50,7 +56,7 @@ class StableCog(commands.Cog, name='NikuNiku900', description='Generate anime im
     )
     async def dream_handler(self, ctx: discord.ApplicationContext, *,
                             prompt: str, negative_prompt: str = None,
-                            spoiler: Optional[bool] = None):
+                            seed: int = None, spoiler: bool = None):
 
         # update defaults with any new defaults from settingscog
         channel = '% s' % ctx.channel.id
