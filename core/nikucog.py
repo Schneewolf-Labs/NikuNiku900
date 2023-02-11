@@ -28,7 +28,7 @@ class StableCog(commands.Cog, name='NikuNiku900', description='Generate anime im
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.bot.add_view(View())
+        self.bot.add_view(viewhandler.DrawView(self))
 
     @commands.slash_command(name='generate', description='Create an image', guild_only=True)
     @option(
