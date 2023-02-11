@@ -10,6 +10,7 @@ from asyncio import AbstractEventLoop
 from PIL import Image, PngImagePlugin
 from discord import option
 from discord.ext import commands
+from discord.ui import View
 from threading import Thread
 from typing import Optional
 
@@ -27,7 +28,7 @@ class StableCog(commands.Cog, name='NikuNiku900', description='Generate anime im
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.bot.add_view(viewhandler.DrawView(self))
+        self.bot.add_view(View(self))
 
     @commands.slash_command(name='generate', description='Create an image', guild_only=True)
     @option(
@@ -164,7 +165,7 @@ class StableCog(commands.Cog, name='NikuNiku900', description='Generate anime im
         input_tuple = (
             ctx, simple_prompt, prompt, negative_prompt, data_model, steps, width, height, guidance_scale, sampler, seed, strength,
             init_image, count, style, facefix, highres_fix, clip_skip, hypernet, lora, spoiler)
-        view = viewhandler.DrawView(input_tuple)
+        view = View(input_tuple)
         # setup the queue
         if queuehandler.GlobalQueue.dream_thread.is_alive():
             user_already_in_queue = False
