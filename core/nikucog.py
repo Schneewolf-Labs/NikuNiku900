@@ -80,6 +80,9 @@ class StableCog(commands.Cog, name='NikuNiku900', description='Generate anime im
         strength = settings.read(channel)['strength']
         count = settings.read(channel)['count']
 
+        init_image = None
+        init_url = None
+
         # if a model is not selected, do nothing
         model_name = 'Default'
         data_model = settings.read(channel)['data_model']
