@@ -50,22 +50,6 @@ class StableCog(commands.Cog, name='NikuNiku900', description='Generate anime im
     )
     async def dream_handler(self, ctx: discord.ApplicationContext, *,
                             prompt: str, negative_prompt: str = None,
-                            data_model: Optional[str] = None,
-                            steps: Optional[int] = None,
-                            width: Optional[int] = None, height: Optional[int] = None,
-                            guidance_scale: Optional[str] = None,
-                            sampler: Optional[str] = None,
-                            seed: Optional[int] = -1,
-                            style: Optional[str] = None,
-                            facefix: Optional[str] = None,
-                            highres_fix: Optional[str] = None,
-                            clip_skip: Optional[int] = None,
-                            hypernet: Optional[str] = None,
-                            lora: Optional[str] = None,
-                            strength: Optional[str] = None,
-                            init_image: Optional[discord.Attachment] = None,
-                            init_url: Optional[str],
-                            count: Optional[int] = None,
                             spoiler: Optional[bool] = None):
 
         # update defaults with any new defaults from settingscog
@@ -73,34 +57,22 @@ class StableCog(commands.Cog, name='NikuNiku900', description='Generate anime im
         settings.check(channel)
         if negative_prompt is None:
             negative_prompt = settings.read(channel)['negative_prompt']
-        if steps is None:
-            steps = settings.read(channel)['steps']
-        if width is None:
-            width = settings.read(channel)['width']
-        if height is None:
-            height = settings.read(channel)['height']
-        if guidance_scale is None:
-            guidance_scale = settings.read(channel)['guidance_scale']
-        if sampler is None:
-            sampler = settings.read(channel)['sampler']
-        if style is None:
-            style = settings.read(channel)['style']
-        if facefix is None:
-            facefix = settings.read(channel)['facefix']
-        if highres_fix is None:
-            highres_fix = settings.read(channel)['highres_fix']
-        if clip_skip is None:
-            clip_skip = settings.read(channel)['clip_skip']
-        if hypernet is None:
-            hypernet = settings.read(channel)['hypernet']
-        if lora is None:
-            lora = settings.read(channel)['lora']
-        if strength is None:
-            strength = settings.read(channel)['strength']
-        if count is None:
-            count = settings.read(channel)['count']
         if spoiler is None:
             spoiler = settings.read(channel)['spoiler']
+
+        steps = settings.read(channel)['steps']
+        width = settings.read(channel)['width']
+        height = settings.read(channel)['height']
+        guidance_scale = settings.read(channel)['guidance_scale']
+        sampler = settings.read(channel)['sampler']
+        style = settings.read(channel)['style']
+        facefix = settings.read(channel)['facefix']
+        highres_fix = settings.read(channel)['highres_fix']
+        clip_skip = settings.read(channel)['clip_skip']
+        hypernet = settings.read(channel)['hypernet']
+        lora = settings.read(channel)['lora']
+        strength = settings.read(channel)['strength']
+        count = settings.read(channel)['count']
 
         # if a model is not selected, do nothing
         model_name = 'Default'
