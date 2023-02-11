@@ -76,8 +76,7 @@ class StableCog(commands.Cog, name='NikuNiku900', description='Generate anime im
 
         # if a model is not selected, do nothing
         model_name = 'Default'
-        if data_model is None:
-            data_model = settings.read(channel)['data_model']
+        data_model = settings.read(channel)['data_model']
 
         simple_prompt = prompt
         # take selected data_model and get model_name, then update data_model with the full name
