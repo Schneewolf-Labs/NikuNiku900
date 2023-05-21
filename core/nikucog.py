@@ -295,9 +295,9 @@ class NikuCog(commands.Cog, name='NikuNiku900', description='Generate anime imag
             for i, image_base64 in enumerate(response_data['images']):
                 image = Image.open(io.BytesIO(base64.b64decode(image_base64.split(",", 1)[0])))
                 # watermark the image
-                font = ImageFont.truetype("arial", 30)
+                #font = ImageFont.truetype("arial", 30)
                 draw = ImageDraw.Draw(image)
-                draw.text((0, 0), "NikuNiku900", fill=(171, 107, 205), font=font)
+                draw.text((0, 0), "NikuNiku900", fill=(171, 107, 205))
                 # add to list of PIL images
                 pil_images.append(image)
 
