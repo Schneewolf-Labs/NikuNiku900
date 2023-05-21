@@ -296,8 +296,10 @@ class NikuCog(commands.Cog, name='NikuNiku900', description='Generate anime imag
                 image = Image.open(io.BytesIO(base64.b64decode(image_base64.split(",", 1)[0])))
                 # watermark the image
                 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 30)
+                watermark_text = "NikuNiku900"
+                text_size = draw.textsize(watermark_text, font)
                 draw = ImageDraw.Draw(image)
-                draw.text((0, 0), "NikuNiku900", fill=(171, 107, 205), font=font)
+                draw.text((image.width-text_size[0], image.height-text_size[1]), watermark_text, fill=(171, 107, 205), font=font)
                 # add to list of PIL images
                 pil_images.append(image)
 
