@@ -110,25 +110,6 @@ class DrawModal(Modal):
 
         # iterate through extended edit for any changes
         for line in self.children[3].value.split('\n'):
-            if 'data_model:' in line:
-                new_model = line.split(':', 1)[1]
-                # if keeping the "Default" model, don't attempt a model swap
-                if new_model == 'Default':
-                    pass
-                else:
-                    for model in settings.global_var.model_info.items():
-                        if model[0] == new_model:
-                            pen[4] = model[1][0]
-                            model_found = True
-                            # grab the new activator token
-                            new_token = f'{model[1][3]} '.lstrip(' ')
-                            break
-                    if not model_found:
-                        invalid_input = True
-                        embed_err.add_field(name=f"`{line.split(':', 1)[1]}` is not found. Try one of these models!",
-                                            value=', '.join(['`%s`' % x for x in settings.global_var.model_info]),
-                                            inline=False)
-
             if 'steps:' in line:
                 max_steps = settings.read('% s' % pen[0].channel.id)['max_steps']
                 if 0 < int(line.split(':', 1)[1]) <= max_steps:
@@ -175,46 +156,6 @@ class DrawModal(Modal):
                     invalid_input = True
                     embed_err.add_field(name=f"`{line.split(':', 1)[1]}` is not valid for strength!.",
                                         value='Make sure you enter a number (preferably between 0.0 and 1.0).',
-                                        inline=False)
-            if 'style:' in line:
-                if line.split(':', 1)[1] in settings.global_var.style_names.keys():
-                    pen[14] = line.split(':', 1)[1]
-                else:
-                    invalid_input = True
-                    embed_err.add_field(name=f"`{line.split(':', 1)[1]}` isn't my style. Here's the style list!",
-                                        value=', '.join(['`%s`' % x for x in settings.global_var.style_names]),
-                                        inline=False)
-            if 'facefix:' in line:
-                if line.split(':', 1)[1] in settings.global_var.facefix_models:
-                    pen[15] = line.split(':', 1)[1]
-                else:
-                    invalid_input = True
-                    embed_err.add_field(name=f"`{line.split(':', 1)[1]}` can't fix faces! I have suggestions.",
-                                        value=', '.join(['`%s`' % x for x in settings.global_var.facefix_models]),
-                                        inline=False)
-            if 'clip_skip:' in line:
-                try:
-                    pen[17] = [x for x in range(1, 14, 1) if x == int(line.split(':', 1)[1])][0]
-                except(Exception,):
-                    invalid_input = True
-                    embed_err.add_field(name=f"`{line.split(':', 1)[1]}` is too much CLIP to skip!",
-                                        value='The range is from `1` to `12`.', inline=False)
-            if 'hypernet:' in line:
-                if line.split(':', 1)[1] in settings.global_var.hyper_names:
-                    pen[18] = line.split(':', 1)[1]
-                else:
-                    invalid_input = True
-                    embed_err.add_field(name=f"`{line.split(':', 1)[1]}` isn't one of these hypernetworks!",
-                                        value=', '.join(['`%s`' % x for x in settings.global_var.hyper_names]),
-                                        inline=False)
-
-            if 'lora:' in line:
-                if line.split(':', 1)[1] in settings.global_var.lora_names:
-                    pen[19] = line.split(':', 1)[1]
-                else:
-                    invalid_input = True
-                    embed_err.add_field(name=f"`{line.split(':', 1)[1]}` can't be found! Try one of these LoRA.",
-                                        value=', '.join(['`%s`' % x for x in settings.global_var.lora_names]),
                                         inline=False)
 
         # stop and give a useful message if any extended edit values aren't recognized
