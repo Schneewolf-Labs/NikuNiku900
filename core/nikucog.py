@@ -7,7 +7,7 @@ import requests
 import time
 import traceback
 from asyncio import AbstractEventLoop
-from PIL import Image, PngImagePlugin, ImageDraw
+from PIL import Image, PngImagePlugin, ImageDraw, ImageFont
 from discord import option
 from discord.ext import commands
 from discord.ui import View
@@ -295,8 +295,9 @@ class NikuCog(commands.Cog, name='NikuNiku900', description='Generate anime imag
             for i, image_base64 in enumerate(response_data['images']):
                 image = Image.open(io.BytesIO(base64.b64decode(image_base64.split(",", 1)[0])))
                 # watermark the image
+                font = ImageFont.truetype("arial.ttf", 30)
                 draw = ImageDraw.Draw(image)
-                draw.text((0, 0), "NikuNiku900", fill=(255, 255, 255))
+                draw.text((0, 0), "NikuNiku900", fill=(255, 255, 255), font=font)
                 # add to list of PIL images
                 pil_images.append(image)
 
