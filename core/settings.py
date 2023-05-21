@@ -310,6 +310,6 @@ def populate_global_vars():
                 pass
     except(Exception,):
         print("Trouble accessing Web UI config! I can't pull the LoRAs or High-res upscaler lists!")
-    global_var.lora_names.remove('')
+    #global_var.lora_names.remove('')
     global_var.lora_names.insert(0, 'None')
     global_var.hires_upscaler_names.insert(0, 'Disabled')
