@@ -43,13 +43,6 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         required=False,
     )
     @option(
-        'data_model',
-        str,
-        description='Select the data model for image generation.',
-        required=False,
-        autocomplete=discord.utils.basic_autocomplete(settingscog.SettingsCog.model_autocomplete),
-    )
-    @option(
         'steps',
         int,
         description='The amount of steps to sample the model.',
@@ -90,48 +83,6 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         required=False,
     )
     @option(
-        'style',
-        str,
-        description='Apply a predefined style to the generation.',
-        required=False,
-        autocomplete=discord.utils.basic_autocomplete(settingscog.SettingsCog.style_autocomplete),
-    )
-    @option(
-        'facefix',
-        str,
-        description='Tries to improve faces in images.',
-        required=False,
-        choices=settings.global_var.facefix_models,
-    )
-    @option(
-        'highres_fix',
-        str,
-        description='Tries to fix issues from generating high-res images. Recommended: Latent (nearest).',
-        required=False,
-        autocomplete=discord.utils.basic_autocomplete(settingscog.SettingsCog.hires_autocomplete),
-    )
-    @option(
-        'clip_skip',
-        int,
-        description='Number of last layers of CLIP model to skip.',
-        required=False,
-        choices=[x for x in range(1, 13, 1)]
-    )
-    @option(
-        'hypernet',
-        str,
-        description='Apply a hypernetwork model to influence the output.',
-        required=False,
-        autocomplete=discord.utils.basic_autocomplete(settingscog.SettingsCog.hyper_autocomplete),
-    )
-    @option(
-        'lora',
-        str,
-        description='Apply a LoRA model to influence the output.',
-        required=False,
-        autocomplete=discord.utils.basic_autocomplete(settingscog.SettingsCog.lora_autocomplete),
-    )
-    @option(
         'strength',
         str,
         description='The amount in which init_image will be altered (0.0 to 1.0).'
@@ -162,18 +113,11 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
     )
     async def dream_handler(self, ctx: discord.ApplicationContext, *,
                             prompt: str, negative_prompt: str = None,
-                            data_model: Optional[str] = None,
                             steps: Optional[int] = None,
                             width: Optional[int] = None, height: Optional[int] = None,
                             guidance_scale: Optional[str] = None,
                             sampler: Optional[str] = None,
                             seed: Optional[int] = -1,
-                            style: Optional[str] = None,
-                            facefix: Optional[str] = None,
-                            highres_fix: Optional[str] = None,
-                            clip_skip: Optional[int] = None,
-                            hypernet: Optional[str] = None,
-                            lora: Optional[str] = None,
                             strength: Optional[str] = None,
                             init_image: Optional[discord.Attachment] = None,
                             init_url: Optional[str],
@@ -195,18 +139,6 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
             guidance_scale = settings.read(channel)['guidance_scale']
         if sampler is None:
             sampler = settings.read(channel)['sampler']
-        if style is None:
-            style = settings.read(channel)['style']
-        if facefix is None:
-            facefix = settings.read(channel)['facefix']
-        if highres_fix is None:
-            highres_fix = settings.read(channel)['highres_fix']
-        if clip_skip is None:
-            clip_skip = settings.read(channel)['clip_skip']
-        if hypernet is None:
-            hypernet = settings.read(channel)['hypernet']
-        if lora is None:
-            lora = settings.read(channel)['lora']
         if strength is None:
             strength = settings.read(channel)['strength']
         if count is None:
@@ -214,10 +146,16 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         if spoiler is None:
             spoiler = settings.read(channel)['spoiler']
 
+        style = settings.read(channel)['style']
+        facefix = settings.read(channel)['facefix']
+        highres_fix = settings.read(channel)['highres_fix']
+        clip_skip = settings.read(channel)['clip_skip']
+        hypernet = settings.read(channel)['hypernet']
+        lora = settings.read(channel)['lora']
+
         # if a model is not selected, do nothing
         model_name = 'Default'
-        if data_model is None:
-            data_model = settings.read(channel)['data_model']
+        data_model = settings.read(channel)['data_model']
 
         simple_prompt = prompt
         # take selected data_model and get model_name, then update data_model with the full name
