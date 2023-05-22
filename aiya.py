@@ -20,6 +20,7 @@ settings.files_check()
 
 self.load_extension('core.settingscog')
 self.load_extension('core.stablecog')
+self.load_extension('core.nikucog')
 self.load_extension('core.upscalecog')
 self.load_extension('core.identifycog')
 self.load_extension('core.infocog')

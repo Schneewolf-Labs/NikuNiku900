@@ -7,9 +7,10 @@ import requests
 import time
 import traceback
 from asyncio import AbstractEventLoop
-from PIL import Image, PngImagePlugin
+from PIL import Image, PngImagePlugin, ImageDraw, ImageFont
 from discord import option
 from discord.ext import commands
+from discord.ui import View
 from threading import Thread
 from typing import Optional
 
@@ -19,7 +20,7 @@ from core import settings
 from core import settingscog
 
 
-class StableCog(commands.Cog, name='Stable Diffusion', description='Create images from natural language.'):
+class NikuCog(commands.Cog, name='NikuNiku900', description='Generate anime images from your prompt!'):
     ctx_parse = discord.ApplicationContext
 
     def __init__(self, bot):
@@ -29,7 +30,7 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
     async def on_ready(self):
         self.bot.add_view(viewhandler.DrawView(self))
 
-    @commands.slash_command(name='draw', description='Create an image', guild_only=True)
+    @commands.slash_command(name='generate', description='Create an image', guild_only=True)
     @option(
         'prompt',
         str,
@@ -43,66 +44,9 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         required=False,
     )
     @option(
-        'steps',
-        int,
-        description='The amount of steps to sample the model.',
-        min_value=1,
-        required=False,
-    )
-    @option(
-        'width',
-        int,
-        description='Width of the generated image.',
-        required=False,
-        choices=[x for x in settings.global_var.size_range]
-    )
-    @option(
-        'height',
-        int,
-        description='Height of the generated image.',
-        required=False,
-        choices=[x for x in settings.global_var.size_range]
-    )
-    @option(
-        'guidance_scale',
-        str,
-        description='Classifier-Free Guidance scale.',
-        required=False,
-    )
-    @option(
-        'sampler',
-        str,
-        description='The sampler to use for generation.',
-        required=False,
-        choices=settings.global_var.sampler_names,
-    )
-    @option(
         'seed',
         int,
         description='The seed to use for reproducibility.',
-        required=False,
-    )
-    @option(
-        'strength',
-        str,
-        description='The amount in which init_image will be altered (0.0 to 1.0).'
-    )
-    @option(
-        'init_image',
-        discord.Attachment,
-        description='The starter image for generation. Remember to set strength value!',
-        required=False,
-    )
-    @option(
-        'init_url',
-        str,
-        description='The starter URL image for generation. This overrides init_image!',
-        required=False,
-    )
-    @option(
-        'count',
-        int,
-        description='The number of images to generate. This is "Batch count", not "Batch size".',
         required=False,
     )
     @option(
@@ -113,45 +57,32 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
     )
     async def dream_handler(self, ctx: discord.ApplicationContext, *,
                             prompt: str, negative_prompt: str = None,
-                            steps: Optional[int] = None,
-                            width: Optional[int] = None, height: Optional[int] = None,
-                            guidance_scale: Optional[str] = None,
-                            sampler: Optional[str] = None,
-                            seed: Optional[int] = -1,
-                            strength: Optional[str] = None,
-                            init_image: Optional[discord.Attachment] = None,
-                            init_url: Optional[str],
-                            count: Optional[int] = None,
-                            spoiler: Optional[bool] = None):
+                            seed: int = None, spoiler: bool = None):
 
         # update defaults with any new defaults from settingscog
         channel = '% s' % ctx.channel.id
         settings.check(channel)
         if negative_prompt is None:
             negative_prompt = settings.read(channel)['negative_prompt']
-        if steps is None:
-            steps = settings.read(channel)['steps']
-        if width is None:
-            width = settings.read(channel)['width']
-        if height is None:
-            height = settings.read(channel)['height']
-        if guidance_scale is None:
-            guidance_scale = settings.read(channel)['guidance_scale']
-        if sampler is None:
-            sampler = settings.read(channel)['sampler']
-        if strength is None:
-            strength = settings.read(channel)['strength']
-        if count is None:
-            count = settings.read(channel)['count']
         if spoiler is None:
             spoiler = settings.read(channel)['spoiler']
 
+        steps = settings.read(channel)['steps']
+        width = settings.read(channel)['width']
+        height = settings.read(channel)['height']
+        guidance_scale = settings.read(channel)['guidance_scale']
+        sampler = settings.read(channel)['sampler']
         style = settings.read(channel)['style']
         facefix = settings.read(channel)['facefix']
         highres_fix = settings.read(channel)['highres_fix']
         clip_skip = settings.read(channel)['clip_skip']
         hypernet = settings.read(channel)['hypernet']
         lora = settings.read(channel)['lora']
+        strength = settings.read(channel)['strength']
+        count = settings.read(channel)['count']
+
+        init_image = None
+        init_url = None
 
         # if a model is not selected, do nothing
         model_name = 'Default'
@@ -234,7 +165,7 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         input_tuple = (
             ctx, simple_prompt, prompt, negative_prompt, data_model, steps, width, height, guidance_scale, sampler, seed, strength,
             init_image, count, style, facefix, highres_fix, clip_skip, hypernet, lora, spoiler)
-        view = viewhandler.DrawView(input_tuple)
+        view = View()
         # setup the queue
         if queuehandler.GlobalQueue.dream_thread.is_alive():
             user_already_in_queue = False
@@ -247,11 +178,11 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
             else:
                 queuehandler.GlobalQueue.queue.append(queuehandler.DrawObject(self, *input_tuple, view))
                 await ctx.send_response(
-                    f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{simple_prompt}``\nSteps: ``{steps}`` - Seed: ``{seed}``{reply_adds}')
+                    f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{simple_prompt}`` - Seed: ``{seed}``{reply_adds}')
         else:
             await queuehandler.process_dream(self, queuehandler.DrawObject(self, *input_tuple, view))
             await ctx.send_response(
-                f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{simple_prompt}``\nSteps: ``{steps}`` - Seed: ``{seed}``{reply_adds}')
+                f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{simple_prompt}`` - Seed: ``{seed}``{reply_adds}')
 
     # the function to queue Discord posts
     def post(self, event_loop: AbstractEventLoop, post_queue_object: queuehandler.PostObject):
@@ -363,6 +294,13 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
             pil_images = []
             for i, image_base64 in enumerate(response_data['images']):
                 image = Image.open(io.BytesIO(base64.b64decode(image_base64.split(",", 1)[0])))
+                # watermark the image
+                draw = ImageDraw.Draw(image)
+                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24)
+                watermark_text = "NikuNiku900"
+                text_size = draw.textsize(watermark_text, font)
+                draw.text((image.width-text_size[0]-1, image.height-text_size[1]-1), watermark_text, fill=(171, 107, 205, 125), font=font)
+                # add to list of PIL images
                 pil_images.append(image)
 
                 # grab png info
@@ -416,4 +354,4 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
 
 
 def setup(bot):
-    bot.add_cog(StableCog(bot))
+    bot.add_cog(NikuCog(bot))
