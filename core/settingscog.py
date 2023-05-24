@@ -4,7 +4,7 @@ from discord.ext import commands
 from typing import Optional
 
 from core import settings
-
+from aiya import privileged_guilds
 
 class SettingsCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -44,7 +44,7 @@ class SettingsCog(commands.Cog):
             hires for hires in settings.global_var.hires_upscaler_names
         ]
 
-    @commands.slash_command(name='settings', description='Review and change channel defaults', guild_only=True)
+    @commands.slash_command(name='settings', description='Review and change channel defaults', guild_only=True, guild_ids=privileged_guilds)
     @option(
         'current_settings',
         bool,
