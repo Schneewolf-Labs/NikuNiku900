@@ -25,9 +25,11 @@ self.load_extension('core.upscalecog')
 self.load_extension('core.identifycog')
 self.load_extension('core.infocog')
 
+# list of privileged guilds
+privileged_guilds = [1070826112915083328]
 
 # stats slash command
-@self.slash_command(name='stats', description='How many images have I generated?')
+@self.slash_command(name='stats', description='How many images have I generated?', guild_ids=privileged_guilds)
 async def stats(ctx):
     with open('resources/stats.txt', 'r') as f:
         data = list(map(int, f.readlines()))
