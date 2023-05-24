@@ -17,7 +17,7 @@ class IdentifyCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.slash_command(name='identify', description='Describe an image', guild_only=True)
+    @commands.slash_command(name='identify', description='Describe an image', guild_only=True, guild_ids=settings.global_var.privileged_guilds)
     @option(
         'init_image',
         discord.Attachment,

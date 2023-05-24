@@ -26,7 +26,7 @@ class UpscaleCog(commands.Cog):
         self.file_name = ''
 
 
-    @commands.slash_command(name='upscale', description='Upscale an image', guild_only=True)
+    @commands.slash_command(name='upscale', description='Upscale an image', guild_only=True, guild_ids=settings.global_var.privileged_guilds)
     @option(
         'init_image',
         discord.Attachment,

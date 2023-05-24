@@ -340,7 +340,7 @@ class InfoCog(commands.Cog):
     async def on_ready(self):
         self.bot.add_view(InfoView())
 
-    @commands.slash_command(name="info", description="Lots of useful information!")
+    @commands.slash_command(name="info", description="Lots of useful information!", guild_ids=settings.global_var.privileged_guilds)
     async def info(self, ctx):
         first_embed = discord.Embed(title='Select a button!',
                                     description='You can check lists of any extra content I have loaded!'

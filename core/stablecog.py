@@ -29,7 +29,7 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
     async def on_ready(self):
         self.bot.add_view(viewhandler.DrawView(self))
 
-    @commands.slash_command(name='draw', description='Create an image', guild_only=True)
+    @commands.slash_command(name='draw', description='Create an image', guild_only=True, guild_ids=settings.global_var.privileged_guilds)
     @option(
         'prompt',
         str,
