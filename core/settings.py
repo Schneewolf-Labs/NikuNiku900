@@ -59,6 +59,7 @@ class GlobalVar:
     lora_names = []
     upscaler_names = []
     hires_upscaler_names = []
+    privileged_guilds = [1070826112915083328]
 
 
 global_var = GlobalVar()

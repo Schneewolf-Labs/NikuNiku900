@@ -44,7 +44,7 @@ class SettingsCog(commands.Cog):
             hires for hires in settings.global_var.hires_upscaler_names
         ]
 
-    @commands.slash_command(name='settings', description='Review and change channel defaults', guild_only=True)
+    @commands.slash_command(name='settings', description='Review and change channel defaults', guild_only=True, guild_ids=settings.global_var.privileged_guilds)
     @option(
         'current_settings',
         bool,
