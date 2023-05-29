@@ -157,9 +157,6 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         model_name = 'Default'
         data_model = settings.read(channel)['data_model']
 
-        # check if this command was used in a private channel
-        private = ctx.channel.id in settings.global_var.private_channels
-
         simple_prompt = prompt
         # take selected data_model and get model_name, then update data_model with the full name
         for model in settings.global_var.model_info.items():
@@ -240,6 +237,7 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         view = viewhandler.DrawView(input_tuple)
 
         # set response function based on whether or not the command was used in a private channel
+        private = false #settings.is_context_private(ctx)
         resp_func = ctx.author.send if private else ctx.send_response
 
         # setup the queue
@@ -262,8 +260,10 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
 
     # the function to queue Discord posts
     def post(self, event_loop: AbstractEventLoop, post_queue_object: queuehandler.PostObject):
+        private = settings.is_context_private(ctx)
+        resp_func = post_queue_object.ctx.author.send if private else post_queue_object.ctx.channel.send
         event_loop.create_task(
-            post_queue_object.ctx.channel.send(
+            resp_func(
                 content=post_queue_object.content,
                 files=post_queue_object.files,
                 view=post_queue_object.view

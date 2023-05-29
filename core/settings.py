@@ -315,3 +315,6 @@ def populate_global_vars():
     #global_var.lora_names.remove('')
     global_var.lora_names.insert(0, 'None')
     global_var.hires_upscaler_names.insert(0, 'Disabled')
+
+def is_context_private(ctx: discord.ApplicationContext)
+    return ctx.channel.id in global_var.private_channels:
