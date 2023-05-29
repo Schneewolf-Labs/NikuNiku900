@@ -235,6 +235,12 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
             ctx, simple_prompt, prompt, negative_prompt, data_model, steps, width, height, guidance_scale, sampler, seed, strength,
             init_image, count, style, facefix, highres_fix, clip_skip, hypernet, lora, spoiler)
         view = viewhandler.DrawView(input_tuple)
+
+        # set response function based on whether or not the command was used in a private channel
+        #private = settings.is_context_private(ctx)
+        #resp_func = ctx.author.send if private else ctx.send_response
+        resp_func = ctx.send_response # always send to channel
+
         # setup the queue
         if queuehandler.GlobalQueue.dream_thread.is_alive():
             user_already_in_queue = False
@@ -243,20 +249,23 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
                     user_already_in_queue = True
                     break
             if user_already_in_queue:
-                await ctx.send_response(content=f'Please wait! You\'re queued up.', ephemeral=True)
+                await resp_func(content=f'Please wait! You\'re queued up.', ephemeral=True)
             else:
                 queuehandler.GlobalQueue.queue.append(queuehandler.DrawObject(self, *input_tuple, view))
-                await ctx.send_response(
+                await resp_func(
                     f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{simple_prompt}``\nSteps: ``{steps}`` - Seed: ``{seed}``{reply_adds}')
         else:
             await queuehandler.process_dream(self, queuehandler.DrawObject(self, *input_tuple, view))
-            await ctx.send_response(
+            await resp_func(
                 f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{simple_prompt}``\nSteps: ``{steps}`` - Seed: ``{seed}``{reply_adds}')
 
     # the function to queue Discord posts
     def post(self, event_loop: AbstractEventLoop, post_queue_object: queuehandler.PostObject):
+        ctx = post_queue_object.ctx
+        private = settings.is_context_private(ctx)
+        resp_func = ctx.author.send if private else ctx.channel.send
         event_loop.create_task(
-            post_queue_object.ctx.channel.send(
+            resp_func(
                 content=post_queue_object.content,
                 files=post_queue_object.files,
                 view=post_queue_object.view

@@ -87,8 +87,11 @@ class IdentifyCog(commands.Cog):
 
     # the function to queue Discord posts
     def post(self, event_loop: AbstractEventLoop, post_queue_object: queuehandler.PostObject):
+        ctx = post_queue_object.ctx
+        private = settings.is_context_private(ctx)
+        resp_func = ctx.author.send if private else ctx.channel.send
         event_loop.create_task(
-            post_queue_object.ctx.channel.send(
+            resp_func(
                 content=post_queue_object.content,
                 embed=post_queue_object.embed,
                 view=post_queue_object.view
