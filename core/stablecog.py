@@ -251,7 +251,8 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
             if user_already_in_queue:
                 await resp_func(content=f'Please wait! You\'re queued up.', ephemeral=True)
             else:
-                queuehandler.GlobalQueue.queue.append(queuehandler.DrawObject(self, *input_tuple, view))
+                high_priority = settings.is_user_high_priority(ctx.author.id)
+                queuehandler.queue_append(queuehandler.DrawObject(self, *input_tuple, view), high_priority)
                 await resp_func(
                     f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{simple_prompt}``\nSteps: ``{steps}`` - Seed: ``{seed}``{reply_adds}')
         else:

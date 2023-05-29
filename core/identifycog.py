@@ -75,7 +75,8 @@ class IdentifyCog(commands.Cog):
                 if user_already_in_queue:
                     await ctx.send_response(content=f'Please wait! You\'re queued up.', ephemeral=True)
                 else:
-                    queuehandler.GlobalQueue.queue.append(queuehandler.IdentifyObject(self, ctx, init_image, phrasing, view))
+                    high_priority = settings.is_user_high_priority(ctx.author.id)
+                    queuehandler.queue_append(queuehandler.IdentifyObject(self, ctx, init_image, phrasing, view), high_priority)
                     await ctx.send_response(
                         f"<@{ctx.author.id}>, I'm identifying the image!"
                         f"\nQueue: ``{len(queuehandler.GlobalQueue.queue)}``", delete_after=45.0)

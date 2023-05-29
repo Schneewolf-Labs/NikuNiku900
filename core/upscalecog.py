@@ -148,7 +148,8 @@ class UpscaleCog(commands.Cog):
                 if user_already_in_queue:
                     await ctx.send_response(content=f'Please wait! You\'re queued up.', ephemeral=True)
                 else:
-                    queuehandler.GlobalQueue.queue.append(queuehandler.UpscaleObject(self, *input_tuple, view))
+                    high_priority = settings.is_user_high_priority(ctx.author.id)
+                    queuehandler.queue_append(queuehandler.UpscaleObject(self, *input_tuple, view), high_priority)
                     await ctx.send_response(
                         f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - Scale: ``{resize}``x - Upscaler: ``{upscaler_1}``{reply_adds}')
             else:
