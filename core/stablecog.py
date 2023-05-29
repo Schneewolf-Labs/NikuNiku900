@@ -261,8 +261,9 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
 
     # the function to queue Discord posts
     def post(self, event_loop: AbstractEventLoop, post_queue_object: queuehandler.PostObject):
+        ctx = post_queue_object.ctx
         private = settings.is_context_private(ctx)
-        resp_func = post_queue_object.ctx.author.send if private else post_queue_object.ctx.channel.send
+        resp_func = ctx.author.send if private else ctx.channel.send
         event_loop.create_task(
             resp_func(
                 content=post_queue_object.content,
