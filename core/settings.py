@@ -318,3 +318,11 @@ def populate_global_vars():
 
 def is_context_private(ctx: discord.ApplicationContext):
     return ctx.channel.id in global_var.private_channels
+def is_user_high_priority(user: discord.User):
+    # check user guild is privileged
+    if user.guild.id not in global_var.privileged_guilds:
+        return False
+    # check user has Elite role
+    role_name = "Elite"
+    role = discord.utils.get(user.guild.roles, name=role_name)
+    return role in user.roles

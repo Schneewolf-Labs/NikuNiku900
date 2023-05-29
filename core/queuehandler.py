@@ -76,6 +76,7 @@ class GlobalQueue:
     dream_thread = Thread()
     post_event_loop = asyncio.get_event_loop()
     queue: list[DrawObject | UpscaleObject | IdentifyObject] = []
+    high_priority_queue: list[DrawObject | UpscaleObject | IdentifyObject] = []
 
     post_thread = Thread()
     event_loop = asyncio.get_event_loop()
@@ -87,9 +88,16 @@ def process_queue():
         queue_object = target_queue.pop(0)
         queue_object.cog.dream(GlobalQueue.event_loop, queue_object)
 
-    if GlobalQueue.queue:
+    if GlobalQueue.high_priority_queue:
+        start(GlobalQueue.high_priority_queue)
+    elif GlobalQueue.queue:
         start(GlobalQueue.queue)
 
+def queue_append(queue_object: DrawObject | UpscaleObject | IdentifyObject, high_priority: bool = False):
+    if high_priority:
+        return GlobalQueue.high_priority_queue.append(queue_object)
+    else:
+        return GlobalQueue.queue.append(queue_object)
 
 async def process_dream(self, queue_object: DrawObject | UpscaleObject | IdentifyObject):
     GlobalQueue.dream_thread = Thread(target=self.dream, args=(GlobalQueue.event_loop, queue_object))
