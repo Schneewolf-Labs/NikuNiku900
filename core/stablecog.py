@@ -157,6 +157,9 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         model_name = 'Default'
         data_model = settings.read(channel)['data_model']
 
+        # check if this command was used in a private channel
+        private = ctx.channel.id in settings.global_var.private_channels
+
         simple_prompt = prompt
         # take selected data_model and get model_name, then update data_model with the full name
         for model in settings.global_var.model_info.items():
@@ -235,6 +238,10 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
             ctx, simple_prompt, prompt, negative_prompt, data_model, steps, width, height, guidance_scale, sampler, seed, strength,
             init_image, count, style, facefix, highres_fix, clip_skip, hypernet, lora, spoiler)
         view = viewhandler.DrawView(input_tuple)
+
+        # set response function based on whether or not the command was used in a private channel
+        resp_func = ctx.send_response if private else ctx.author.send
+
         # setup the queue
         if queuehandler.GlobalQueue.dream_thread.is_alive():
             user_already_in_queue = False
@@ -243,14 +250,14 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
                     user_already_in_queue = True
                     break
             if user_already_in_queue:
-                await ctx.send_response(content=f'Please wait! You\'re queued up.', ephemeral=True)
+                await resp_func(content=f'Please wait! You\'re queued up.', ephemeral=True)
             else:
                 queuehandler.GlobalQueue.queue.append(queuehandler.DrawObject(self, *input_tuple, view))
-                await ctx.send_response(
+                await resp_func(
                     f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{simple_prompt}``\nSteps: ``{steps}`` - Seed: ``{seed}``{reply_adds}')
         else:
             await queuehandler.process_dream(self, queuehandler.DrawObject(self, *input_tuple, view))
-            await ctx.send_response(
+            await resp_func(
                 f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{simple_prompt}``\nSteps: ``{steps}`` - Seed: ``{seed}``{reply_adds}')
 
     # the function to queue Discord posts
