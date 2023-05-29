@@ -240,7 +240,7 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         view = viewhandler.DrawView(input_tuple)
 
         # set response function based on whether or not the command was used in a private channel
-        resp_func = ctx.send_response if private else ctx.author.send
+        resp_func = ctx.author.send if private else ctx.send_response
 
         # setup the queue
         if queuehandler.GlobalQueue.dream_thread.is_alive():
