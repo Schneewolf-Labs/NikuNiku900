@@ -61,6 +61,7 @@ class GlobalVar:
     hires_upscaler_names = []
     privileged_guilds = [1070826112915083328]
     private_channels = [1112759291858915449]
+    high_priority_roles = ["Admin", "Elite"]
 
 
 global_var = GlobalVar()
@@ -322,7 +323,9 @@ def is_user_high_priority(user: discord.User):
     # check user guild is privileged
     if user.guild.id not in global_var.privileged_guilds:
         return False
-    # check user has Elite role
-    role_name = "Elite"
-    role = discord.utils.get(user.guild.roles, name=role_name)
-    return role in user.roles
+    # check user has a high priority role
+    for role_name in global_var.high_priority_roles:
+        role = discord.utils.get(user.guild.roles, name=role_name)
+        if role in user.roles:
+            return True
+    return False
