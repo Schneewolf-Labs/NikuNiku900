@@ -62,6 +62,7 @@ class GlobalVar:
     privileged_guilds = [1070826112915083328]
     private_channels = [1112759291858915449]
     high_priority_roles = ["Admin", "Elite"]
+    vip_invite_role = 1073807384578895872
 
 
 global_var = GlobalVar()

@@ -30,6 +30,27 @@ class NikuCog(commands.Cog, name='NikuNiku900', description='Generate anime imag
     async def on_ready(self):
         self.bot.add_view(viewhandler.DrawView(self))
 
+    @commands.slash_command(name='invite', description='Grant the VIP invite role to a user', guild_only=True)
+    @option(
+        'user',
+        discord.User,
+        description="User to invite",
+        required=True
+    )
+    async def invite_handler(self, ctx: discord.ApplicationContext, *, user: discord.User):
+        try:
+            # get role id from globalvar
+            role_id = settings.global_var.vip_invite_role
+            # get role from id
+            role = ctx.guild.get_role(role_id)
+            # add role to user
+            await user.add_roles(role)
+            # send confirmation
+            await ctx.send_response(f'Added role ``{role.name}`` to ``{user.name}#{user.discriminator}``')
+        except Exception as e:
+            print(e)
+            await ctx.send_response('Something went wrong!')
+
     @commands.slash_command(name='generate', description='Create an image', guild_only=True)
     @option(
         'prompt',
