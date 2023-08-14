@@ -319,9 +319,6 @@ def populate_global_vars():
     global_var.hires_upscaler_names.insert(0, 'Disabled')
 
 def is_context_private(ctx: discord.ApplicationContext):
-    # check if context is direct message
-    if ctx.guild is None:
-        return True
     # check if context is in private channel
     return ctx.channel.id in global_var.private_channels
 def is_user_high_priority(user: discord.User):

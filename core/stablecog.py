@@ -238,8 +238,9 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
 
         # set response function based on whether or not the command was used in a private channel
         private = settings.is_context_private(ctx)
-        resp_func = ctx.author.send if private else ctx.send_response
-        #resp_func = ctx.send_response # always send to channel
+        #resp_func = ctx.author.send if private else ctx.send_response
+        resp_func = ctx.send_response # always send to channel
+        display_prompt = '-' if private else simple_prompt
 
         # setup the queue
         if queuehandler.GlobalQueue.dream_thread.is_alive():
@@ -254,11 +255,11 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
                 high_priority = settings.is_user_high_priority(ctx.author)
                 queuehandler.queue_append(queuehandler.DrawObject(self, *input_tuple, view), high_priority)
                 await resp_func(
-                    f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{simple_prompt}``\nSteps: ``{steps}`` - Seed: ``{seed}``{reply_adds}')
+                    f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{display_prompt}``\nSteps: ``{steps}`` - Seed: ``{seed}``{reply_adds}')
         else:
             await queuehandler.process_dream(self, queuehandler.DrawObject(self, *input_tuple, view))
             await resp_func(
-                f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{simple_prompt}``\nSteps: ``{steps}`` - Seed: ``{seed}``{reply_adds}')
+                f'<@{ctx.author.id}>, {settings.messages()}\nQueue: ``{len(queuehandler.GlobalQueue.queue)}`` - ``{display_prompt}``\nSteps: ``{steps}`` - Seed: ``{seed}``{reply_adds}')
 
     # the function to queue Discord posts
     def post(self, event_loop: AbstractEventLoop, post_queue_object: queuehandler.PostObject):
