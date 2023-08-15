@@ -30,7 +30,7 @@ class NikuCog(commands.Cog, name='NikuNiku900', description='Generate anime imag
     async def on_ready(self):
         self.bot.add_view(viewhandler.DrawView(self))
 
-    @commands.slash_command(name='invite', description='Grant the VIP invite role to a user', guild_only=True)
+    @commands.slash_command(name='invite', description='Grant the VIP invite role to a user', guild_only=True, guild_ids=settings.global_var.privileged_guilds)
     @option(
         'user',
         discord.User,
