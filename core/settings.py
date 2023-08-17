@@ -15,7 +15,7 @@ path = 'resources/'.format(dir_path)
 template = {
     "negative_prompt": "",
     "data_model": "",
-    "steps": 30,
+    "steps": 20,
     "max_steps": 50,
     "width": 512,
     "height": 512,
