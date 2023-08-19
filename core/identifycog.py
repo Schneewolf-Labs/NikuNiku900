@@ -35,12 +35,12 @@ class IdentifyCog(commands.Cog):
         str,
         description='The way the image will be described.',
         required=False,
-        choices=['Normal', 'Tags']
+        choices=['Tags', 'Description']
     )
     async def dream_handler(self, ctx: discord.ApplicationContext, *,
                             init_image: Optional[discord.Attachment] = None,
                             init_url: Optional[str],
-                            phrasing: Optional[str] = 'Normal'):
+                            phrasing: Optional[str] = 'Tags'):
 
         has_image = True
         # url *will* override init image for compatibility, can be changed here
@@ -58,7 +58,7 @@ class IdentifyCog(commands.Cog):
                 has_image = False
 
         # Update layman-friendly "phrasing" choices into what API understands
-        if phrasing == 'Normal':
+        if phrasing == 'Description':
             phrasing = 'clip'
         else:
             phrasing = 'deepdanbooru'
