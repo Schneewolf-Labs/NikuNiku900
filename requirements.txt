@@ -1,4 +1,4 @@
 py-cord
 python-dotenv
 requests
-Pillow
+Pillow==9.4.0
