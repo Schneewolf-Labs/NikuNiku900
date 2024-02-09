@@ -151,12 +151,12 @@ class NikuCog(commands.Cog, name='NikuNiku900', description='Generate anime imag
         if steps > settings.read(channel)['max_steps']:
             steps = settings.read(channel)['max_steps']
             reply_adds += f'\nExceeded maximum of ``{steps}`` steps! This is the best I can do...'
-        if model_name != 'Default':
-            reply_adds += f'\nModel: ``{model_name}``'
-        if negative_prompt != '':
-            reply_adds += f'\nNegative Prompt: ``{negative_prompt}``'
-        if (width != 512) or (height != 512):
-            reply_adds += f'\nSize: ``{width}``x``{height}``'
+        # if model_name != 'Default':
+        #     reply_adds += f'\nModel: ``{model_name}``'
+        # if negative_prompt != '':
+        #     reply_adds += f'\nNegative Prompt: ``{negative_prompt}``'
+        # if (width != 512) or (height != 512):
+        #     reply_adds += f'\nSize: ``{width}``x``{height}``'
         if guidance_scale != '7.0':
             try:
                 float(guidance_scale)
