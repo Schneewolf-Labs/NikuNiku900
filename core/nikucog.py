@@ -90,7 +90,11 @@ class NikuCog(commands.Cog, name='NikuNiku900', description='Generate anime imag
 
         steps = settings.read(channel)['steps']
         width = settings.read(channel)['width']
+        if width < 768:
+            width = 768
         height = settings.read(channel)['height']
+        if height < 768:
+            height = 768
         guidance_scale = settings.read(channel)['guidance_scale']
         sampler = settings.read(channel)['sampler']
         style = settings.read(channel)['style']
